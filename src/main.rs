@@ -5,25 +5,31 @@ fn main() {
     let args: Vec<String> = env::args().collect(); //Handles argument input and collect to put it in a String vector
     dbg!(&args); //Remove when done
 
-    // Destructuring the tuple returned from parse_config
-    let (query, file_path) = parse_config(&args);
+    // Declaring a config variable that calls parse_config -> Config
+    let config = parse_config(&args);
 
     hash_print(50);
-    println!("Searching for {}", query);
-    println!("In file {}", file_path);
+    println!("Searching for {}", config.query); //config.<attrib> is easier to understand relationship
+    println!("In file {}", config.file_path); //config.<attrib> is easier to understand relationship
     hash_print(50);
 
     // Takes the string file_path and reads the text in it
-    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
+    let contents =
+        fs::read_to_string(config.file_path).expect("Should have been able to read the file");
     println!("With text:\n{contents}");
 }
 
-// Parsing the cli arguments
-fn parse_config(args: &[String]) -> (&str, &str) {
-    let query = &args[1];
-    let file_path = &args[2];
+struct Config {
+    query: String,
+    file_path: String,
+}
 
-    (query, file_path)
+// Parsing the cli arguments
+fn parse_config(args: &[String]) -> Config {
+    let query = args[1].clone();
+    let file_path = args[2].clone();
+
+    Config { query, file_path }
 }
 
 // UTILS
