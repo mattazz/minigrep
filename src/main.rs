@@ -5,8 +5,8 @@ fn main() {
     let args: Vec<String> = env::args().collect(); //Handles argument input and collect to put it in a String vector
     dbg!(&args); //Remove when done
 
-    let query = &args[1];
-    let file_path = &args[2];
+    // Destructuring the tuple returned from parse_config
+    let (query, file_path) = parse_config(&args);
 
     hash_print(50);
     println!("Searching for {}", query);
@@ -18,6 +18,15 @@ fn main() {
     println!("With text:\n{contents}");
 }
 
+// Parsing the cli arguments
+fn parse_config(args: &[String]) -> (&str, &str) {
+    let query = &args[1];
+    let file_path = &args[2];
+
+    (query, file_path)
+}
+
+// UTILS
 fn hash_print(num: u8) {
     let str = "#".repeat(num as usize);
     println!("{}", str)
