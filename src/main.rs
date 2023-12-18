@@ -1,12 +1,15 @@
 use std::env;
 use std::fs;
+use std::process;
 
 fn main() {
     let args: Vec<String> = env::args().collect(); //Handles argument input and collect to put it in a String vector
-    dbg!(&args); //Remove when done
 
     // Declaring a config variable that calls parse_config -> Config
-    let config = parse_config(&args);
+    let config = Config::build(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
 
     hash_print(50);
     println!("Searching for {}", config.query); //config.<attrib> is easier to understand relationship
@@ -19,17 +22,22 @@ fn main() {
     println!("With text:\n{contents}");
 }
 
+// Config Struct impl fn new -> Creates a new config struct
 struct Config {
     query: String,
     file_path: String,
 }
+impl Config {
+    fn build(args: &[String]) -> Result<Config, &'static str> {
+        if args.len() < 3 {
+            return Err("Not enough arguments");
+        }
 
-// Parsing the cli arguments
-fn parse_config(args: &[String]) -> Config {
-    let query = args[1].clone();
-    let file_path = args[2].clone();
+        let query = args[1].clone();
+        let file_path = args[2].clone();
 
-    Config { query, file_path }
+        Ok(Config { query, file_path })
+    }
 }
 
 // UTILS
